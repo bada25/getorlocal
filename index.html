@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orlocal: know what's taking up space</title>
+<meta name="description" content="File search, storage explanations and cleanup you review first. Mac and Windows. Completely offline. $19.99 once.">
+<meta property="og:title" content="Orlocal">
+<meta property="og:description" content="Know what's taking up space. Find what you need. $19.99 once.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--card:#111113;--line:#1C1C1E;--line2:#2C2C2E;--text:#FFF;--muted:#AEAEB2;--faint:#8E8E93}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.pill{display:inline-block;text-decoration:none;border:none;border-radius:999px;cursor:pointer;font-weight:700}
+.pill-white{background:#FFF;color:#000}
+.pill-white:hover{background:#E5E5EA}
+.link-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:12px;font-size:14px}
+.link-btn:hover{color:#FFF}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}
+
+/* Desktop */
+.desk{min-height:100vh;display:flex;flex-direction:column}
+.nav{width:100%;max-width:1200px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.nav-right{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 24px 0;gap:14px}
+.eyebrow{margin:0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.hero h1{margin:0;font-size:54px;line-height:1.03;font-weight:800;letter-spacing:-.03em;max-width:820px}
+.hero .sub{margin:0;font-size:19px;line-height:1.5;color:var(--muted);max-width:600px}
+.small{margin:0;font-size:13px;color:var(--faint)}
+.try{margin:16px 0 0;font-size:13px;font-weight:600}
+.demo-wrap{margin-bottom:28px;width:768px;max-width:calc(100vw - 48px);border-radius:14px;border:1px solid var(--line2);overflow:hidden;box-shadow:0 30px 100px rgba(255,255,255,.07)}
+.demo-scale{width:960px;height:600px;transform-origin:top left}
+footer{border-top:1px solid var(--line)}
+.foot{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.foot a{font-size:12px;color:var(--faint);text-decoration:none;padding:8px 10px}
+.foot a:hover{color:#FFF}
+
+/* Panels */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:24px}
+.overlay.open{display:flex}
+.panel{width:560px;max-width:100%;max-height:85vh;overflow-y:auto;background:var(--card);border:1px solid var(--line2);border-radius:22px;padding:32px;display:flex;flex-direction:column;gap:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.panel h2{margin:0;font-size:26px;font-weight:800}
+.close{background:var(--line2);border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.item{border-top:1px solid var(--line2);padding-top:16px;display:flex;flex-direction:column;gap:6px}
+.item h3{margin:0;font-size:16px;font-weight:700}
+.item p{margin:0;font-size:15px;line-height:1.55;color:var(--muted)}
+
+/* Phone */
+.phone{display:none}
+@media (max-width:760px){
+  .desk{display:none}
+  .phone{display:flex;min-height:100vh;min-height:100dvh;flex-direction:column;align-items:center;text-align:center;padding:56px 24px calc(24px + env(safe-area-inset-bottom));gap:18px}
+}
+.ref{background:var(--line);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;font-size:13px;color:#D1D1D6}
+.phone h1{margin:0;font-size:34px;font-weight:800;letter-spacing:-.02em}
+.phone .price{margin:6px 0 0;font-size:17px;color:var(--muted)}
+.points{width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px;text-align:left;margin-top:8px}
+.point{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:15px}
+.grow{flex:1}
+.buy-big{width:100%;max-width:420px;padding:18px;font-size:18px}
+.phone .note{margin:0;font-size:13px;line-height:1.45;color:var(--faint)}
+.phone-links{display:flex;gap:2px;flex-wrap:wrap;justify-content:center}
+.phone-links a,.phone-links button{font-size:12px;color:#636366;text-decoration:none;padding:8px;background:none;border:none;cursor:pointer}
+
+/* Demo app */
+.app{width:960px;height:600px;position:relative;display:flex;background:#0B0B0C;color:#FFF;text-align:left;overflow:hidden;font-size:13px}
+.side{width:190px;flex-shrink:0;background:#161618;padding:14px 10px;display:flex;flex-direction:column;gap:2px;border-right:1px solid #222}
+.dots{display:flex;gap:7px;padding:0 6px 16px}.dots span{width:11px;height:11px;border-radius:50%}
+.side .name{margin:0 0 12px 10px;font-size:19px;font-weight:700}
+.navb{text-align:left;border:none;border-radius:8px;padding:9px 10px;font-size:13px;cursor:pointer;background:none;color:#C7C7CC}
+.navb.on{background:#2C2C2E;color:#FFF;font-weight:600}
+.side .demo-note{margin:0;padding:0 10px;font-size:11px;line-height:1.4;color:var(--faint)}
+.main{flex:1;min-width:0;position:relative;padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.searchbtn{text-align:left;background:none;border:1px solid var(--line2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--faint);cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.lbl{margin:0;font-size:12px;color:var(--faint)}
+.big{margin:4px 0 0;font-size:36px;font-weight:800;letter-spacing:-.02em}
+.wbtn{background:#FFF;color:#000;border:none;border-radius:999px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer}
+.bar{height:8px;border-radius:4px;background:#2C2C2E;overflow:hidden}.bar div{height:100%;background:#FFF;transition:width .4s}
+.box{background:#161618;border:1px solid #222;border-radius:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.card .amt{margin:0;font-size:22px;font-weight:800}
+.card .det{margin:0;font-size:12px;color:var(--muted)}
+.obtn{align-self:flex-start;margin-top:8px;background:none;border:1px solid #48484A;border-radius:999px;padding:6px 13px;font-size:11px;cursor:pointer}
+.h{margin:0;font-size:24px;font-weight:800}
+.chip{border-radius:999px;padding:6px 13px;font-size:12px;cursor:pointer;background:none;border:1px solid #3A3A3C}
+.chip.on{background:#FFF;color:#000;border-color:#FFF;font-weight:600}
+.frow{display:flex;align-items:center;gap:12px;padding:8px 4px;border-bottom:1px solid var(--line)}
+.ext{width:30px;height:30px;border-radius:7px;background:#2C2C2E;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--muted);flex-shrink:0}
+.fname{margin:0;font-size:13px;font-weight:600}.fkind{margin:1px 0 0;font-size:11px;color:var(--faint)}
+.sinput{width:260px;background:#161618;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;color:#FFF;font:inherit;font-size:13px;outline:none}
+.toast{position:absolute;left:20px;right:20px;bottom:16px;background:#1C1C1E;border:1px solid #3A3A3C;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;z-index:3}
+.confirm{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:6}
+.tip{background:#FFF;color:#000;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.tip .step{margin:0;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#636366}
+.tip .txt{margin:0;font-size:13px;line-height:1.4;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- Desktop -->
+<div class="desk">
+  <nav class="nav">
+    <a class="logo" href="./"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="7" fill="#000"/><circle cx="15" cy="15" r="9" fill="none" stroke="#FFF" stroke-width="3"/><circle cx="15" cy="15" r="2.6" fill="#FFF"/></svg>Orlocal</a>
+    <div class="nav-right">
+      <button class="link-btn" data-panel="how">How it works</button>
+      <button class="link-btn" data-panel="privacy">Privacy</button>
+      <button class="link-btn" data-panel="faq">FAQ</button>
+      <button class="pill pill-white buy" style="margin-left:8px;font-size:14px;font-weight:600;padding:12px 20px">Buy for $19.99</button>
+    </div>
+  </nav>
+  <main class="hero">
+    <p class="eyebrow">For Mac and Windows</p>
+    <h1>Know what's taking up space. Find what you need.</h1>
+    <p class="sub">File search, storage explanations and cleanup you review first. Completely offline.</p>
+    <button class="pill pill-white buy" style="margin-top:6px;font-size:18px;padding:17px 38px">Buy for $19.99</button>
+    <p class="small">Pay once. No account. Download link and key sent by email.</p>
+    <p class="try">Try it right here. Follow the steps.</p>
+    <div class="demo-wrap" id="demoWrap"><div class="demo-scale" id="demoScale"><div class="app" id="app"></div></div></div>
+  </main>
+  <footer><div class="foot">
+    <p class="small" style="font-size:12px">© 2026 Orlocal</p>
+    <div><a href="terms.html">Terms</a><a href="privacy.html">Privacy policy</a><a href="refunds.html">Refunds</a></div>
+  </div></footer>
+</div>
+
+<!-- Phone -->
+<div class="phone">
+  <span class="ref" id="refTag" hidden></span>
+  <svg width="84" height="84" viewBox="0 0 30 30" role="img" aria-label="Orlocal icon"><rect width="30" height="30" rx="7" fill="#111113" stroke="#2C2C2E" stroke-width="0.5"/><circle cx="15" cy="15" r="9" fill="none" stroke="#FFF" stroke-width="2.6"/><circle cx="15" cy="15" r="2.4" fill="#FFF"/></svg>
+  <div><h1>Orlocal</h1><p class="price">$19.99 once. Mac and Windows.</p></div>
+  <div class="points">
+    <div class="point"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h10"/></svg>Finds what's filling your computer</div>
+    <div class="point"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search any file fast</div>
+    <div class="point"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>Works offline. Your files stay yours.</div>
+  </div>
+  <div class="grow"></div>
+  <button class="pill pill-white buy buy-big">Buy for $19.99</button>
+  <p class="note">We email you the download link and key.<br>Open it on your computer.</p>
+  <div class="phone-links">
+    <button data-panel="faq">FAQ</button><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a>
+  </div>
+</div>
+
+<!-- Panels -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+  <div class="panel">
+    <div class="panel-head"><h2 id="panelTitle"></h2>
+      <button class="close" id="panelClose" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button>
+    </div>
+    <div id="panelBody" style="display:flex;flex-direction:column;gap:16px"></div>
+    <button class="pill pill-white buy" style="align-self:flex-start;font-size:15px;padding:14px 26px">Buy for $19.99</button>
+  </div>
+</div>
+
+<script>
+// ---------- Settings ----------
+// Fill these in once Paddle approves the account. Until then Buy shows a "coming soon" note.
+const PADDLE = { clientToken: '', priceId: '' };
+const SUPPORT_EMAIL = 'support@getorlocal.com';
+
+// ---------- Ambassador referral (?ref=name) ----------
+const params = new URLSearchParams(location.search);
+const ref = (params.get('ref') || params.get('fpr') || '').replace(/[^\w.\-]/g, '').slice(0, 40);
+if (ref) {
+  try { localStorage.setItem('orlocal_ref', ref); } catch (e) {}
+  const tag = document.getElementById('refTag');
+  tag.textContent = 'From @' + ref; tag.hidden = false;
+}
+
+// ---------- Panels ----------
+const PANELS = {
+  how: ['How it works', [
+    ['1. Scan', 'Orlocal looks through your computer in a few minutes and sorts everything by type.'],
+    ['2. Review', "See what's taking up space: old installers, opened zips, extra copies, similar photos and editing caches. Search any file by name in seconds."],
+    ['3. Free up space', 'You choose what goes. Removed files wait 30 days in Quarantine so you can restore them, or free the space right away.']]],
+  privacy: ['Privacy', [
+    ['No internet', 'Orlocal never connects to the internet. Your files are never uploaded anywhere.'],
+    ['No account', 'There is nothing to sign up for. Your license key works offline.'],
+    ['No tracking', 'No analytics and no data collection inside the app.']]],
+  faq: ['Questions', [
+    ['How do I get the app after paying?', 'Right after checkout we email you the download link and your license key. Open the email on your computer, install, paste the key.'],
+    ['Will it delete something I need?', 'Nothing is removed until you review it, and removed files can be restored for 30 days.'],
+    ['Which computers does it work on?', 'Mac with macOS 13 or newer, and Windows 10 and 11.'],
+    ['Can I get a refund?', 'Yes. See the refund policy at the bottom of the page.']]]
+};
+const overlay = document.getElementById('overlay');
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function openPanel(k) {
+  const [title, items] = PANELS[k];
+  document.getElementById('panelTitle').textContent = title;
+  document.getElementById('panelBody').innerHTML = items.map(([h, p]) => `<div class="item"><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('');
+  overlay.classList.add('open');
+}
+function closePanel() { overlay.classList.remove('open'); }
+document.querySelectorAll('[data-panel]').forEach(b => b.addEventListener('click', () => openPanel(b.dataset.panel)));
+document.getElementById('panelClose').addEventListener('click', closePanel);
+overlay.addEventListener('click', e => { if (e.target === overlay) closePanel(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+// ---------- Checkout ----------
+let paddleReady = false;
+if (PADDLE.clientToken && PADDLE.priceId) {
+  const s = document.createElement('script');
+  s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+  s.onload = () => { Paddle.Initialize({ token: PADDLE.clientToken }); paddleReady = true; if (ref && isPhone()) openCheckout(); };
+  document.head.appendChild(s);
+}
+function isPhone() { return matchMedia('(max-width:760px)').matches; }
+function openCheckout() {
+  closePanel();
+  if (!paddleReady) {
+    document.getElementById('panelTitle').textContent = 'Almost ready';
+    document.getElementById('panelBody').innerHTML = '<div class="item"><p>Checkout opens here very soon. Check back shortly.</p></div>';
+    overlay.classList.add('open');
+    return;
+  }
+  Paddle.Checkout.open({
+    items: [{ priceId: PADDLE.priceId, quantity: 1 }],
+    customData: ref ? { ref } : undefined,
+    settings: { successUrl: location.origin + '/thanks.html', theme: 'light' }
+  });
+}
+document.querySelectorAll('.buy').forEach(b => b.addEventListener('click', openCheckout));
+
+// ---------- Demo scale ----------
+function fitDemo() {
+  const wrap = document.getElementById('demoWrap');
+  const w = wrap.clientWidth;
+  const scale = Math.min(0.8, w / 960);
+  document.getElementById('demoScale').style.transform = `scale(${scale})`;
+  wrap.style.height = (600 * scale) + 'px';
+}
+addEventListener('resize', fitDemo);
+
+// ---------- Interactive demo ----------
+const S0 = { screen: 'home', phase: 'idle', progress: 0, removed: false, freed: false, caches: false, search: '', chip: 'All', tidied: false, toast: null, confirming: false, tipHidden: false };
+let S = { ...S0 };
+let timer = null;
+function set(o) { S = { ...S, ...o }; render(); }
+
+const FILES = [
+  ['Screenshot, Oct 29, 4:18 PM', 'Photo', 'PNG', 'Photos', '1.6 MB', 'Oct 29'],
+  ['Lecture 4 recording', 'Video · 42:10 · 1080p', 'MP4', 'Videos', '820 MB', 'Oct 27'],
+  ['Lecture 5 notes', 'PDF', 'PDF', 'Documents', '2.4 MB', 'Oct 26'],
+  ['Biology lab report', 'Word document', 'DOCX', 'Documents', '640 KB', 'Oct 24'],
+  ['Final project footage', 'Video · 3:12 · 4K', 'MOV', 'Videos', '1.1 GB', 'Oct 22'],
+  ['Zoom installer', 'App installer', 'PKG', 'Installers', '92 MB', 'Sep 30'],
+  ['Spotify installer', 'App installer', 'DMG', 'Installers', '140 MB', 'Sep 12'],
+  ['Spring break photos.zip', 'Zip file, already opened', 'ZIP', 'Other', '180 MB', 'Apr 2'],
+  ['Resume 2026', 'PDF', 'PDF', 'Documents', '180 KB', 'Mar 18'],
+  ['IMG_2041', 'Photo', 'HEIC', 'Photos', '3.1 MB', 'Mar 3']
+];
+const DUPES = [
+  ['Final project footage.mov', 'Video · 3:12 · 4K', 'Frees 1.1 GB'],
+  ['Lecture 4 recording.mp4', 'Video · 42:10 · 1080p', 'Frees 820 MB'],
+  ['Spring break photos.zip', 'Zip file', 'Frees 180 MB'],
+  ['Resume 2026.pdf', 'PDF', 'Frees 180 KB']
+];
+const MESSY = ['Screenshot 1.png', 'Lecture 5 notes.pdf', 'ZoomInstaller.pkg', 'IMG_2041.heic', 'Lab report.docx', 'clip_final.mov', 'Spotify.dmg', 'Resume 2026.pdf', 'Screenshot 2.png', 'trip.zip', 'syllabus.pdf', 'IMG_2042.heic'];
+const FOLDERS = [['Images', '4 files'], ['Documents', '4 files'], ['Videos', '1 file'], ['App Installers', '2 files'], ['Zip Files', '1 file']];
+
+const A = {
+  go: k => set({ screen: k }),
+  scan: () => {
+    if (S.phase === 'scanning') return;
+    clearInterval(timer);
+    set({ phase: 'scanning', progress: 0, screen: 'home' });
+    timer = setInterval(() => {
+      const p = S.progress + 4;
+      if (p >= 100) { clearInterval(timer); set({ phase: 'done', progress: 100 }); } else set({ progress: p });
+    }, 70);
+  },
+  card: k => {
+    if (k === 'free') set({ confirming: true });
+    if (k === 'inst') set({ screen: 'files', chip: 'Installers', search: '' });
+    if (k === 'copies') set({ screen: 'clean' });
+    if (k === 'caches') set({ caches: true, toast: { t: 'Caches cleared', m: '1.3 GB is free on your Mac.' } });
+    if (k === 'zips') set({ screen: 'files', chip: 'All', search: 'zip' });
+  },
+  chip: c => set({ chip: c }),
+  remove: () => set({ removed: true, toast: { t: 'Moved to Quarantine', m: '2.1 GB ready to free.', undo: true } }),
+  undo: () => set({ removed: false, toast: null }),
+  askFree: () => set({ confirming: true }),
+  cancelFree: () => set({ confirming: false }),
+  freeUp: () => set({ confirming: false, freed: true, toast: { t: 'Space freed', m: '2.1 GB is free on your Mac.' } }),
+  closeToast: () => set({ toast: null }),
+  tidy: () => set({ tidied: !S.tidied }),
+  hideTip: () => set({ tipHidden: true }),
+  restart: () => { clearInterval(timer); S = { ...S0 }; render(); }
+};
+
+function render() {
+  const total = 245.1;
+  const free = 16.2 + (S.freed ? 2.1 : 0) + (S.caches ? 1.3 : 0);
+  const used = total - free;
+  const words = S.search.toLowerCase().split(/\s+/).filter(Boolean);
+  const nav = [['home', 'Home'], ['files', 'Files'], ['clean', 'Clean Up'], ['organize', 'Organize']]
+    .map(([k, l]) => `<button class="navb${S.screen === k ? ' on' : ''}" data-a="go" data-v="${k}">${l}</button>`).join('');
+
+  let body = '';
+  if (S.screen === 'home') {
+    let below = '';
+    if (S.phase === 'idle') below = `<div style="border:1px dashed #3A3A3C;border-radius:14px;padding:36px;text-align:center;color:var(--faint);font-size:14px">Press Scan to find what's taking up space.</div>`;
+    if (S.phase === 'scanning') below = `<div class="box" style="padding:26px;display:flex;flex-direction:column;gap:12px"><p style="margin:0;font-size:15px;font-weight:600">Scanning your Mac</p><div class="bar" style="height:6px"><div style="width:${S.progress}%;transition:none"></div></div><p class="lbl">${Math.round(S.progress * 482).toLocaleString()} files checked</p></div>`;
+    if (S.phase === 'done') {
+      const cards = [];
+      if (S.removed && !S.freed) cards.push(['2.1 GB', 'In Quarantine, ready to free', 'Free Up Now', 'free']);
+      cards.push(['5.54 GB', "20 app installers you probably don't need anymore", 'Review', 'inst']);
+      if (!S.removed) cards.push(['2.1 GB', '4 extra copies of files you already have', 'Clean Up', 'copies']);
+      if (!S.caches) cards.push(['1.3 GB', 'Video editing caches you can clear', 'Clear', 'caches']);
+      cards.push(['482 MB', '40 zip files you may have already opened', 'Review', 'zips']);
+      below = `<p style="margin:0;font-size:16px;font-weight:700">Free up space</p><div class="grid2">${cards.map(([a, d, b, k]) => `<div class="box card"><p class="amt">${a}</p><p class="det">${d}</p><button class="obtn" data-a="card" data-v="${k}">${b}</button></div>`).join('')}</div>`;
+    }
+    body = `<button class="searchbtn" data-a="go" data-v="files">Search your files by name</button>
+      <div class="row"><div><p class="lbl">Your Mac</p><p class="big">${free.toFixed(1)} GB free</p><p class="lbl" style="margin-top:2px">${used.toFixed(1)} GB used of ${total} GB</p></div>
+      <button class="wbtn" data-a="scan">${S.phase === 'idle' ? 'Scan' : 'Scan Again'}</button></div>
+      <div class="bar"><div style="width:${(used / total * 100).toFixed(1)}%"></div></div>${below}`;
+  }
+  if (S.screen === 'files') {
+    const rows = FILES.filter(f => (S.chip === 'All' || f[3] === S.chip) && words.every(w => f[0].toLowerCase().includes(w)));
+    body = `<div class="row" style="align-items:center"><p class="h">Files</p><input class="sinput" id="sinput" type="text" aria-label="Search files by name" placeholder="Search by name, try lecture" value="${esc(S.search)}"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${['All', 'Photos', 'Documents', 'Videos', 'Installers'].map(c => `<button class="chip${S.chip === c ? ' on' : ''}" data-a="chip" data-v="${c}">${c}</button>`).join('')}</div>
+      <div>${rows.map(f => `<div class="frow"><div class="ext">${f[2]}</div><div style="flex:1;min-width:0"><p class="fname">${esc(f[0])}</p><p class="fkind">${f[1]}</p></div><p class="lbl" style="width:90px">${f[5]}</p><p style="margin:0;font-size:12px;font-weight:600;width:64px;text-align:right">${f[4]}</p></div>`).join('') || '<p class="lbl" style="margin:16px 4px">No files match.</p>'}</div>`;
+  }
+  if (S.screen === 'clean') {
+    if (S.phase === 'done' && !S.removed) {
+      body = `<p class="h">Clean Up</p><div class="box" style="padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px"><div><p class="amt" style="margin:0;font-size:26px;font-weight:800">2.1 GB</p><p class="det" style="margin:2px 0 0;font-size:12px;color:var(--muted)">4 extra copies. We keep the newest copy of each file.</p></div><button class="wbtn" data-a="remove">Remove All Extra Copies</button></div>
+        ${DUPES.map(d => `<div class="frow" style="padding:10px 6px"><div style="flex:1;min-width:0"><p class="fname">${d[0]}</p><p class="fkind">${d[1]}</p></div><span style="background:#2C2C2E;border-radius:999px;padding:3px 9px;font-size:11px">2 copies</span><p style="margin:0;font-size:12px;font-weight:600;width:80px;text-align:right">${d[2]}</p></div>`).join('')}`;
+    } else {
+      const t = S.phase !== 'done' ? ['Scan first', 'Go to Home and press Scan.'] : ['No duplicates', 'Every file is one of a kind.'];
+      body = `<p class="h">Clean Up</p><div class="box" style="padding:22px"><p style="margin:0;font-size:22px;font-weight:800">${t[0]}</p><p class="det" style="margin:4px 0 0;font-size:13px;color:var(--muted)">${t[1]}</p></div>`;
+    }
+  }
+  if (S.screen === 'organize') {
+    body = `<div class="row" style="align-items:center"><div><p class="h">Organize</p><p class="lbl" style="margin-top:2px">${S.tidied ? 'Downloads is tidy. 12 files sorted into folders.' : 'Downloads has 12 loose files.'}</p></div><button class="wbtn" data-a="tidy">${S.tidied ? 'Undo' : 'Tidy Up'}</button></div>` +
+      (S.tidied
+        ? `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">${FOLDERS.map(([n, c]) => `<div class="box" style="padding:16px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg><p style="margin:6px 0 0;font-size:15px;font-weight:700">${n}</p><p class="lbl" style="font-size:11px">${c}</p></div>`).join('')}</div>`
+        : `<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">${MESSY.map(n => `<div class="box" style="border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px"><span style="font-size:9px;font-weight:700;color:var(--muted)">${n.split('.').pop().toUpperCase()}</span><span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n}</span></div>`).join('')}</div>`);
+  }
+
+  let toast = '';
+  if (S.toast) {
+    const showUndo = S.toast.undo && !S.freed;
+    toast = `<div class="toast"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#30D158"/><path d="M6 10.5l2.5 2.5L14 7.5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div style="flex:1;min-width:0"><p style="margin:0;font-size:13px;font-weight:700">${S.toast.t}</p><p style="margin:1px 0 0;font-size:12px;color:var(--muted)">${S.toast.m}</p></div>
+      ${showUndo ? `<button class="obtn" style="margin:0;font-size:12px;padding:7px 14px" data-a="undo">Undo</button><button class="wbtn" style="font-size:12px;padding:8px 14px" data-a="askFree">Free Up Now</button>` : ''}
+      <button aria-label="Close message" data-a="closeToast" style="background:none;border:none;cursor:pointer;padding:8px"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>`;
+  }
+
+  let step = 1, tip = 'Press Scan to see what is taking up space on this computer.';
+  if (S.phase === 'scanning') tip = 'Scanning sample files. This takes a minute or two on a real computer.';
+  else if (S.phase === 'done' && !S.removed) { step = 2; tip = S.screen === 'clean' ? 'Press Remove All Extra Copies. The newest copy of each file stays.' : 'Found space to free. Open Clean Up to remove extra copies.'; }
+  else if (S.removed && !S.freed) { step = 3; tip = 'The copies are in Quarantine for 30 days. Press Free Up Now to get the space back.'; }
+  else if (S.freed && !words.length) { step = 4; tip = S.screen === 'files' ? 'Type lecture in the search box.' : 'Now find a file. Open Files and search.'; }
+  else if (S.freed && !S.tidied) { step = 5; tip = 'Last one: open Organize and press Tidy Up.'; }
+  if (S.freed && words.length && S.tidied) { step = 6; tip = "That's Orlocal. Your own computer, cleaned up in a minute."; }
+  const tipHtml = S.tipHidden ? '' : `<div class="tip"><p class="step">${step === 6 ? 'Done' : 'Step ' + step + ' of 5'}</p><p class="txt">${tip}</p>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><button data-a="hideTip" style="background:none;border:none;padding:6px 0;font-size:12px;color:#636366;cursor:pointer">Hide tips</button>
+    ${step === 6 ? '<button data-a="restart" style="background:#000;color:#FFF;border:none;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer">Start over</button>' : ''}</div></div>`;
+
+  const confirm = S.confirming ? `<div class="confirm"><div style="width:300px;background:#2C2C2E;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px;text-align:center">
+    <p style="margin:0;font-size:15px;font-weight:700">Free up 2.1 GB now?</p><p style="margin:0;font-size:12px;line-height:1.45;color:#D1D1D6">These 4 files will be deleted for good. You can't undo this.</p>
+    <div style="display:flex;gap:8px;margin-top:6px"><button data-a="cancelFree" style="flex:1;background:#48484A;border:none;border-radius:8px;padding:10px;font-size:13px;cursor:pointer">Cancel</button><button data-a="freeUp" style="flex:1;background:#48484A;color:#FF6961;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">Free Up Now</button></div></div></div>` : '';
+
+  const focused = document.activeElement && document.activeElement.id === 'sinput';
+  const app = document.getElementById('app');
+  app.innerHTML = `<div class="side"><div class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></div>
+    <p class="name">Orlocal</p>${nav}<div style="flex:1"></div>${tipHtml}<p class="demo-note">Demo with sample files. Nothing on your computer is touched.</p></div>
+    <div class="main">${body}${toast}</div>${confirm}`;
+  const input = document.getElementById('sinput');
+  if (input) {
+    input.addEventListener('input', e => { const pos = e.target.selectionStart; set({ search: e.target.value }); const i = document.getElementById('sinput'); i.focus(); i.setSelectionRange(pos, pos); });
+    if (focused) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+  }
+}
+document.getElementById('app').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if (!b) return;
+  A[b.dataset.a](b.dataset.v);
+});
+render();
+fitDemo();
+</script>
+</body>
+</html>
