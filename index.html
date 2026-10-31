@@ -164,13 +164,14 @@ footer{border-top:1px solid var(--line)}
 
 <script>
 // ---------- Settings ----------
-// Fill these in once Paddle approves the account. Until then Buy shows a "coming soon" note.
-const PADDLE = { clientToken: '', priceId: '' };
+// Paste the Whop checkout link for the $19.99 plan here once the product exists.
+// Until then Buy shows a "coming soon" note.
+const WHOP_CHECKOUT_URL = '';
 const SUPPORT_EMAIL = 'support@getorlocal.com';
 
 // ---------- Ambassador referral (?ref=name) ----------
 const params = new URLSearchParams(location.search);
-const ref = (params.get('ref') || params.get('fpr') || '').replace(/[^\w.\-]/g, '').slice(0, 40);
+const ref = (params.get('a') || params.get('ref') || '').replace(/[^\w.\-]/g, '').slice(0, 40);
 if (ref) {
   try { localStorage.setItem('orlocal_ref', ref); } catch (e) {}
   const tag = document.getElementById('refTag');
@@ -207,28 +208,19 @@ document.getElementById('panelClose').addEventListener('click', closePanel);
 overlay.addEventListener('click', e => { if (e.target === overlay) closePanel(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 
-// ---------- Checkout ----------
-let paddleReady = false;
-if (PADDLE.clientToken && PADDLE.priceId) {
-  const s = document.createElement('script');
-  s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-  s.onload = () => { Paddle.Initialize({ token: PADDLE.clientToken }); paddleReady = true; if (ref && isPhone()) openCheckout(); };
-  document.head.appendChild(s);
-}
-function isPhone() { return matchMedia('(max-width:760px)').matches; }
+// ---------- Checkout (Whop) ----------
+// Whop credits the ambassador from the "a" code in the link.
 function openCheckout() {
   closePanel();
-  if (!paddleReady) {
+  if (!WHOP_CHECKOUT_URL) {
     document.getElementById('panelTitle').textContent = 'Almost ready';
     document.getElementById('panelBody').innerHTML = '<div class="item"><p>Checkout opens here very soon. Check back shortly.</p></div>';
     overlay.classList.add('open');
     return;
   }
-  Paddle.Checkout.open({
-    items: [{ priceId: PADDLE.priceId, quantity: 1 }],
-    customData: ref ? { ref } : undefined,
-    settings: { successUrl: location.origin + '/thanks.html', theme: 'light' }
-  });
+  const url = new URL(WHOP_CHECKOUT_URL);
+  if (ref) url.searchParams.set('a', ref);
+  location.href = url.toString();
 }
 document.querySelectorAll('.buy').forEach(b => b.addEventListener('click', openCheckout));
 
