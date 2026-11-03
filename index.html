@@ -129,7 +129,7 @@ footer{border-top:1px solid var(--line)}
   </main>
   <footer><div class="foot">
     <p class="small" style="font-size:12px">© 2026 Orlocal</p>
-    <div><a href="terms.html">Terms</a><a href="privacy.html">Privacy policy</a><a href="refunds.html">Refunds</a></div>
+    <div><a href="terms.html">Terms</a><a href="privacy.html">Privacy policy</a></div>
   </div></footer>
 </div>
 
@@ -147,7 +147,7 @@ footer{border-top:1px solid var(--line)}
   <button class="pill pill-white buy buy-big">Buy for $19.99</button>
   <p class="note">We email you the download link and key.<br>Open it on your computer.</p>
   <div class="phone-links">
-    <button data-panel="faq">FAQ</button><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a>
+    <button data-panel="faq">FAQ</button><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a>
   </div>
 </div>
 
@@ -191,8 +191,7 @@ const PANELS = {
   faq: ['Questions', [
     ['How do I get the app after paying?', 'Right after checkout we email you the download link and your license key. Open the email on your computer, install, paste the key.'],
     ['Will it delete something I need?', 'Nothing is removed until you review it, and removed files can be restored for 30 days.'],
-    ['Which computers does it work on?', 'Mac with macOS 13 or newer, and Windows 10 and 11.'],
-    ['Can I get a refund?', 'Yes. See the refund policy at the bottom of the page.']]]
+    ['Which computers does it work on?', 'Mac with macOS 13 or newer, and Windows 10 and 11.']]]
 };
 const overlay = document.getElementById('overlay');
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
