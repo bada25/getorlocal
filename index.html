@@ -168,6 +168,9 @@ footer{border-top:1px solid var(--line)}
 // Until then Buy shows a "coming soon" note.
 const WHOP_CHECKOUT_URL = 'https://whop.com/checkout/plan_s2iqpNPsjqxcv';
 const SUPPORT_EMAIL = 'support@getorlocal.com';
+// The demo talks about the visitor's own computer: "Your PC" on Windows, "Your Mac" everywhere else
+const ON_WINDOWS = /Windows/i.test(navigator.userAgent);
+const COMPUTER = ON_WINDOWS ? 'PC' : 'Mac';
 
 // ---------- Ambassador referral (?ref=name) ----------
 const params = new URLSearchParams(location.search);
@@ -245,8 +248,8 @@ const FILES = [
   ['Lecture 5 notes', 'PDF', 'PDF', 'Documents', '2.4 MB', 'Oct 26'],
   ['Biology lab report', 'Word document', 'DOCX', 'Documents', '640 KB', 'Oct 24'],
   ['Final project footage', 'Video · 3:12 · 4K', 'MOV', 'Videos', '1.1 GB', 'Oct 22'],
-  ['Zoom installer', 'App installer', 'PKG', 'Installers', '92 MB', 'Sep 30'],
-  ['Spotify installer', 'App installer', 'DMG', 'Installers', '140 MB', 'Sep 12'],
+  ['Zoom installer', 'App installer', ON_WINDOWS ? 'EXE' : 'PKG', 'Installers', '92 MB', 'Sep 30'],
+  ['Spotify installer', 'App installer', ON_WINDOWS ? 'EXE' : 'DMG', 'Installers', '140 MB', 'Sep 12'],
   ['Spring break photos.zip', 'Zip file, already opened', 'ZIP', 'Other', '180 MB', 'Apr 2'],
   ['Resume 2026', 'PDF', 'PDF', 'Documents', '180 KB', 'Mar 18'],
   ['IMG_2041', 'Photo', 'HEIC', 'Photos', '3.1 MB', 'Mar 3']
@@ -257,7 +260,7 @@ const DUPES = [
   ['Spring break photos.zip', 'Zip file', 'Frees 180 MB'],
   ['Resume 2026.pdf', 'PDF', 'Frees 180 KB']
 ];
-const MESSY = ['Screenshot 1.png', 'Lecture 5 notes.pdf', 'ZoomInstaller.pkg', 'IMG_2041.heic', 'Lab report.docx', 'clip_final.mov', 'Spotify.dmg', 'Resume 2026.pdf', 'Screenshot 2.png', 'trip.zip', 'syllabus.pdf', 'IMG_2042.heic'];
+const MESSY = ['Screenshot 1.png', 'Lecture 5 notes.pdf', ON_WINDOWS ? 'ZoomInstaller.exe' : 'ZoomInstaller.pkg', 'IMG_2041.heic', 'Lab report.docx', 'clip_final.mov', ON_WINDOWS ? 'SpotifySetup.exe' : 'Spotify.dmg', 'Resume 2026.pdf', 'Screenshot 2.png', 'trip.zip', 'syllabus.pdf', 'IMG_2042.heic'];
 const FOLDERS = [['Images', '4 files'], ['Documents', '4 files'], ['Videos', '1 file'], ['App Installers', '2 files'], ['Zip Files', '1 file']];
 
 const A = {
@@ -275,7 +278,7 @@ const A = {
     if (k === 'free') set({ confirming: true });
     if (k === 'inst') set({ screen: 'files', chip: 'Installers', search: '' });
     if (k === 'copies') set({ screen: 'clean' });
-    if (k === 'caches') set({ caches: true, toast: { t: 'Caches cleared', m: '1.3 GB is free on your Mac.' } });
+    if (k === 'caches') set({ caches: true, toast: { t: 'Caches cleared', m: `1.3 GB is free on your ${COMPUTER}.` } });
     if (k === 'zips') set({ screen: 'files', chip: 'All', search: 'zip' });
   },
   chip: c => set({ chip: c }),
@@ -283,7 +286,7 @@ const A = {
   undo: () => set({ removed: false, toast: null }),
   askFree: () => set({ confirming: true }),
   cancelFree: () => set({ confirming: false }),
-  freeUp: () => set({ confirming: false, freed: true, toast: { t: 'Space freed', m: '2.1 GB is free on your Mac.' } }),
+  freeUp: () => set({ confirming: false, freed: true, toast: { t: 'Space freed', m: `2.1 GB is free on your ${COMPUTER}.` } }),
   closeToast: () => set({ toast: null }),
   tidy: () => set({ tidied: !S.tidied }),
   hideTip: () => set({ tipHidden: true }),
@@ -302,7 +305,7 @@ function render() {
   if (S.screen === 'home') {
     let below = '';
     if (S.phase === 'idle') below = `<div style="border:1px dashed #3A3A3C;border-radius:14px;padding:36px;text-align:center;color:var(--faint);font-size:14px">Press Scan to find what's taking up space.</div>`;
-    if (S.phase === 'scanning') below = `<div class="box" style="padding:26px;display:flex;flex-direction:column;gap:12px"><p style="margin:0;font-size:15px;font-weight:600">Scanning your Mac</p><div class="bar" style="height:6px"><div style="width:${S.progress}%;transition:none"></div></div><p class="lbl">${Math.round(S.progress * 482).toLocaleString()} files checked</p></div>`;
+    if (S.phase === 'scanning') below = `<div class="box" style="padding:26px;display:flex;flex-direction:column;gap:12px"><p style="margin:0;font-size:15px;font-weight:600">Scanning your ${COMPUTER}</p><div class="bar" style="height:6px"><div style="width:${S.progress}%;transition:none"></div></div><p class="lbl">${Math.round(S.progress * 482).toLocaleString()} files checked</p></div>`;
     if (S.phase === 'done') {
       const cards = [];
       if (S.removed && !S.freed) cards.push(['2.1 GB', 'In Quarantine, ready to free', 'Free Up Now', 'free']);
@@ -313,7 +316,7 @@ function render() {
       below = `<p style="margin:0;font-size:16px;font-weight:700">Free up space</p><div class="grid2">${cards.map(([a, d, b, k]) => `<div class="box card"><p class="amt">${a}</p><p class="det">${d}</p><button class="obtn" data-a="card" data-v="${k}">${b}</button></div>`).join('')}</div>`;
     }
     body = `<button class="searchbtn" data-a="go" data-v="files">Search your files by name</button>
-      <div class="row"><div><p class="lbl">Your Mac</p><p class="big">${free.toFixed(1)} GB free</p><p class="lbl" style="margin-top:2px">${used.toFixed(1)} GB used of ${total} GB</p></div>
+      <div class="row"><div><p class="lbl">Your ${COMPUTER}</p><p class="big">${free.toFixed(1)} GB free</p><p class="lbl" style="margin-top:2px">${used.toFixed(1)} GB used of ${total} GB</p></div>
       <button class="wbtn" data-a="scan">${S.phase === 'idle' ? 'Scan' : 'Scan Again'}</button></div>
       <div class="bar"><div style="width:${(used / total * 100).toFixed(1)}%"></div></div>${below}`;
   }
