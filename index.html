@@ -56,8 +56,15 @@ footer{border-top:1px solid var(--line)}
 /* Phone */
 .phone{display:none}
 @media (max-width:760px){
-  .desk{display:none}
-  .phone{display:flex;min-height:100vh;min-height:100dvh;flex-direction:column;align-items:center;text-align:center;padding:56px 24px calc(24px + env(safe-area-inset-bottom));gap:18px}
+  body.social .desk{display:none}
+  .nav{padding:14px 16px;justify-content:center}
+  .nav-right{justify-content:center}
+  .nav-right .link-btn{padding:10px 8px;font-size:13px}
+  .hero{padding:18px 16px 0}
+  .hero h1{font-size:36px}
+  .hero .sub{font-size:16px}
+  .demo-wrap{max-width:calc(100vw - 32px)}
+  body.social .phone{display:flex;min-height:100vh;min-height:100dvh;flex-direction:column;align-items:center;text-align:center;padding:56px 24px calc(24px + env(safe-area-inset-bottom));gap:18px}
 }
 .ref{background:var(--line);border:1px solid var(--line2);border-radius:999px;padding:7px 14px;font-size:13px;color:#D1D1D6}
 .phone h1{margin:0;font-size:34px;font-weight:800;letter-spacing:-.02em}
@@ -146,7 +153,7 @@ footer{border-top:1px solid var(--line)}
   <div class="grow"></div>
   <button class="pill pill-white buy buy-big">Buy for $19.99</button>
   <p class="note">We email you the download link and key.<br>Open it on your computer.</p>
-  <div class="phone-links">
+  <div class="phone-links"><button id="fullSite">See full site</button>
     <button data-panel="faq">FAQ</button><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a>
   </div>
 </div>
@@ -171,6 +178,21 @@ const SUPPORT_EMAIL = 'support@getorlocal.com';
 // The demo talks about the visitor's own computer: "Your PC" on Windows, "Your Mac" everywhere else
 const ON_WINDOWS = /Windows/i.test(navigator.userAgent);
 const COMPUTER = ON_WINDOWS ? 'PC' : 'Mac';
+
+// ---------- Who sees the short phone screen ----------
+// Visitors from TikTok, Instagram or Facebook (in-app browser, the page they came from, or a ?ref / ?src link)
+// get the short buy screen on phones. Everyone else gets the full site.
+(function () {
+  const ua = navigator.userAgent, refr = document.referrer;
+  const q = new URLSearchParams(location.search);
+  const social = /musical_ly|Bytedance|TikTok|Instagram|FBAN|FBAV|FB_IAB/i.test(ua)
+    || /tiktok\.com|instagram\.com|facebook\.com|fb\.me|l\.instagram/i.test(refr)
+    || q.has('a') || q.has('ref') || /tiktok|instagram|ig|tt|fb/i.test(q.get('src') || q.get('utm_source') || '');
+  if (social) document.body.classList.add('social');
+  document.getElementById('fullSite').addEventListener('click', () => {
+    document.body.classList.remove('social'); scrollTo(0, 0); fitDemo();
+  });
+})();
 
 // ---------- Ambassador referral (?ref=name) ----------
 const params = new URLSearchParams(location.search);
