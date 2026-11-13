@@ -188,7 +188,8 @@ const COMPUTER = ON_WINDOWS ? 'PC' : 'Mac';
   const social = /musical_ly|Bytedance|TikTok|Instagram|FBAN|FBAV|FB_IAB/i.test(ua)
     || /tiktok\.com|instagram\.com|facebook\.com|fb\.me|l\.instagram/i.test(refr)
     || q.has('a') || q.has('ref') || /tiktok|instagram|ig|tt|fb/i.test(q.get('src') || q.get('utm_source') || '');
-  if (social) document.body.classList.add('social');
+  // Everyone now sees the full site so visitors from TikTok and Instagram can see what Orlocal does
+  void social;
   document.getElementById('fullSite').addEventListener('click', () => {
     document.body.classList.remove('social'); scrollTo(0, 0); fitDemo();
   });
